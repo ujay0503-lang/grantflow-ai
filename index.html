@@ -1,101 +1,236 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
+
 <meta charset="UTF-8">
-<title>GrantFlow AI</title>
+<title>通能企業補助計畫生成器</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 
 body{
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
 margin:0;
-background:linear-gradient(135deg,#1a1f3a,#0d0f1f);
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+background:#0f1221;
 color:white;
-height:100vh;
 display:flex;
-align-items:center;
-justify-content:center;
+height:100vh;
 }
 
-.container{
-width:700px;
-background:rgba(255,255,255,0.05);
-backdrop-filter:blur(20px);
-border-radius:20px;
+/* sidebar */
+
+.sidebar{
+width:240px;
+background:#151834;
+padding:30px 20px;
+display:flex;
+flex-direction:column;
+}
+
+.logo{
+font-size:22px;
+font-weight:bold;
+margin-bottom:25px;
+}
+
+.menu{
+opacity:.7;
+margin-bottom:15px;
+}
+
+.menu:hover{
+opacity:1;
+cursor:pointer;
+}
+
+/* main */
+
+.main{
+flex:1;
 padding:40px;
-box-shadow:0 20px 60px rgba(0,0,0,0.4);
+overflow:auto;
 }
 
-h1{
-margin-top:0;
-font-size:36px;
+.header{
+font-size:30px;
+margin-bottom:10px;
 }
+
+.subtitle{
+opacity:.6;
+margin-bottom:30px;
+}
+
+/* panel */
+
+.panel{
+background:#1c2147;
+padding:30px;
+border-radius:16px;
+max-width:900px;
+box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+
+/* sections */
+
+.section{
+margin-bottom:35px;
+}
+
+.section-title{
+font-size:18px;
+margin-bottom:15px;
+opacity:.9;
+}
+
+/* inputs */
 
 input,textarea{
 width:100%;
 padding:12px;
-margin-top:10px;
-margin-bottom:20px;
 border-radius:8px;
 border:none;
-font-size:16px;
+margin-top:6px;
+margin-bottom:12px;
+font-size:15px;
 }
+
+/* button */
 
 button{
 background:#5b8cff;
 border:none;
-padding:14px 24px;
-font-size:16px;
+padding:14px 26px;
 border-radius:10px;
+font-size:16px;
 cursor:pointer;
-transition:0.2s;
+margin-top:10px;
 }
 
 button:hover{
-transform:scale(1.05);
 background:#7aa2ff;
 }
 
+/* result */
+
 .result{
 margin-top:30px;
-padding:20px;
-background:rgba(0,0,0,0.3);
+background:#0d1029;
+padding:25px;
 border-radius:10px;
-min-height:120px;
+min-height:220px;
 white-space:pre-wrap;
+line-height:1.7;
 }
 
-.footer{
-margin-top:20px;
-font-size:12px;
-opacity:0.5;
+/* loader */
+
+.loader{
+display:none;
+opacity:.6;
+margin-top:10px;
 }
 
 </style>
+
 </head>
 
 <body>
 
-<div class="container">
+<div class="sidebar">
 
-<h1>GrantFlow AI</h1>
-<p>AI 補助計畫書生成器</p>
-
-<label>計畫名稱</label>
-<input id="title" placeholder="例如：AI智慧農業平台">
-
-<label>計畫說明</label>
-<textarea id="desc" rows="4" placeholder="描述你的產品或服務"></textarea>
-
-<button onclick="generate()">生成計畫</button>
-
-<div class="result" id="result">
-AI 生成結果會出現在這裡
+<div class="logo">
+通能企業補助
 </div>
 
-<div class="footer">
-GrantFlow AI • Serverless Demo
+<div class="menu">計畫生成</div>
+<div class="menu">生成紀錄</div>
+<div class="menu">設定</div>
+
+</div>
+
+<div class="main">
+
+<div class="header">
+通能企業補助計畫生成器
+</div>
+
+<div class="subtitle">
+AI協助快速生成 SBIR / 創業補助提案
+</div>
+
+<div class="panel">
+
+<div class="section">
+
+<div class="section-title">
+基本資料（必填）
+</div>
+
+<label>公司名稱</label>
+<input id="company">
+
+<label>成立年份</label>
+<input id="year">
+
+<label>公司簡介</label>
+<textarea id="company_desc"></textarea>
+
+<label>團隊背景</label>
+<textarea id="team"></textarea>
+
+<label>項目名稱</label>
+<input id="project">
+
+<label>項目描述</label>
+<textarea id="project_desc"></textarea>
+
+<label>技術核心</label>
+<textarea id="tech"></textarea>
+
+</div>
+
+<div class="section">
+
+<div class="section-title">
+進階補充（選填可不填，由平台協助生成）
+</div>
+
+<label>市場分析</label>
+<textarea id="market"></textarea>
+
+<label>目標客戶</label>
+<textarea id="customer"></textarea>
+
+<label>競品分析</label>
+<textarea id="competitor"></textarea>
+
+<label>差異化優勢</label>
+<textarea id="advantage"></textarea>
+
+<label>商業模式</label>
+<textarea id="business"></textarea>
+
+<label>研發里程碑</label>
+<textarea id="milestone"></textarea>
+
+<label>預期成果</label>
+<textarea id="result_expect"></textarea>
+
+</div>
+
+<button onclick="generate()">
+生成補助計畫書
+</button>
+
+<div class="loader" id="loader">
+平台智能 正在生成內容...
+</div>
+
+<div class="result" id="result">
+生成結果會顯示在這裡
+</div>
+
 </div>
 
 </div>
@@ -104,20 +239,44 @@ GrantFlow AI • Serverless Demo
 
 async function generate(){
 
-const title=document.getElementById("title").value
-const desc=document.getElementById("desc").value
+const data={
 
-document.getElementById("result").innerText="生成中..."
+company:document.getElementById("company").value,
+year:document.getElementById("year").value,
+company_desc:document.getElementById("company_desc").value,
+team:document.getElementById("team").value,
+project:document.getElementById("project").value,
+project_desc:document.getElementById("project_desc").value,
+tech:document.getElementById("tech").value,
+
+market:document.getElementById("market").value,
+customer:document.getElementById("customer").value,
+competitor:document.getElementById("competitor").value,
+advantage:document.getElementById("advantage").value,
+business:document.getElementById("business").value,
+milestone:document.getElementById("milestone").value,
+result_expect:document.getElementById("result_expect").value
+
+}
+
+const loader=document.getElementById("loader")
+const result=document.getElementById("result")
+
+loader.style.display="block"
+result.innerText=""
 
 const res=await fetch("/api/generate",{
+
 method:"POST",
 headers:{ "Content-Type":"application/json"},
-body:JSON.stringify({title,desc})
+body:JSON.stringify(data)
+
 })
 
-const data=await res.json()
+const r=await res.json()
 
-document.getElementById("result").innerText=data.result
+loader.style.display="none"
+result.innerText=r.result
 
 }
 
