@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-
 <meta charset="UTF-8">
 <title>通能企業補助計畫生成器</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 
+*{box-sizing:border-box}
+
 body{
 margin:0;
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
 background:#0f1221;
-color:white;
+color:#fff;
 display:flex;
 height:100vh;
 }
@@ -23,25 +24,21 @@ height:100vh;
 width:240px;
 background:#151834;
 padding:30px 20px;
-display:flex;
-flex-direction:column;
 }
 
 .logo{
-font-size:22px;
+font-size:20px;
 font-weight:bold;
 margin-bottom:25px;
 }
 
 .menu{
 opacity:.7;
-margin-bottom:15px;
-}
-
-.menu:hover{
-opacity:1;
+margin-bottom:14px;
 cursor:pointer;
 }
+
+.menu:hover{opacity:1}
 
 /* main */
 
@@ -52,8 +49,8 @@ overflow:auto;
 }
 
 .header{
-font-size:30px;
-margin-bottom:10px;
+font-size:28px;
+margin-bottom:6px;
 }
 
 .subtitle{
@@ -61,74 +58,93 @@ opacity:.6;
 margin-bottom:30px;
 }
 
-/* panel */
-
 .panel{
 background:#1c2147;
 padding:30px;
-border-radius:16px;
-max-width:900px;
-box-shadow:0 20px 60px rgba(0,0,0,.3);
+border-radius:14px;
+max-width:920px;
+box-shadow:0 20px 60px rgba(0,0,0,.4);
 }
 
-/* sections */
-
 .section{
-margin-bottom:35px;
+margin-bottom:30px;
 }
 
 .section-title{
 font-size:18px;
-margin-bottom:15px;
-opacity:.9;
+margin-bottom:6px;
 }
 
-/* inputs */
+.section-desc{
+font-size:13px;
+opacity:.6;
+margin-bottom:14px;
+}
+
+label{
+font-size:13px;
+opacity:.8;
+}
 
 input,textarea{
 width:100%;
-padding:12px;
+padding:11px;
 border-radius:8px;
 border:none;
 margin-top:6px;
-margin-bottom:12px;
-font-size:15px;
+margin-bottom:10px;
+font-size:14px;
 }
 
-/* button */
+/* buttons */
 
-button{
+.btn{
 background:#5b8cff;
 border:none;
-padding:14px 26px;
-border-radius:10px;
-font-size:16px;
+padding:13px 24px;
+border-radius:9px;
+font-size:15px;
 cursor:pointer;
+margin-right:10px;
 margin-top:10px;
 }
 
-button:hover{
-background:#7aa2ff;
+.btn:hover{background:#7aa2ff}
+
+.btn-secondary{
+background:#3b3f69;
+}
+
+.btn-secondary:hover{
+background:#4c5185;
 }
 
 /* result */
 
 .result{
-margin-top:30px;
+margin-top:28px;
 background:#0d1029;
-padding:25px;
+padding:24px;
 border-radius:10px;
-min-height:220px;
+min-height:260px;
 white-space:pre-wrap;
 line-height:1.7;
 }
 
-/* loader */
-
 .loader{
 display:none;
-opacity:.6;
 margin-top:10px;
+opacity:.6;
+}
+
+.history-item{
+margin-bottom:10px;
+opacity:.8;
+cursor:pointer;
+}
+
+.history-item:hover{
+opacity:1;
 }
 
 </style>
@@ -139,32 +155,28 @@ margin-top:10px;
 
 <div class="sidebar">
 
-<div class="logo">
-通能企業補助
-</div>
+<div class="logo">通能企業補助</div>
 
-<div class="menu">計畫生成</div>
-<div class="menu">生成紀錄</div>
-<div class="menu">設定</div>
+<div class="menu" onclick="showGenerator()">計畫生成</div>
+<div class="menu" onclick="showHistory()">生成紀錄</div>
 
 </div>
 
 <div class="main">
 
-<div class="header">
-通能企業補助計畫生成器
-</div>
+<div class="header">通能企業補助計畫生成器</div>
+<div class="subtitle">AI 協助生成 SBIR / 創業補助提案</div>
 
-<div class="subtitle">
-AI協助快速生成 SBIR / 創業補助提案
-</div>
-
-<div class="panel">
+<div class="panel" id="generator">
 
 <div class="section">
 
 <div class="section-title">
 基本資料（必填）
+</div>
+
+<div class="section-desc">
+填寫基本資料，平台AI將依此自動生成完整補助計畫
 </div>
 
 <label>公司名稱</label>
@@ -193,7 +205,11 @@ AI協助快速生成 SBIR / 創業補助提案
 <div class="section">
 
 <div class="section-title">
-進階補充（選填可不填，由平台協助生成）
+進階補充（選填）
+</div>
+
+<div class="section-desc">
+可不填寫，未填寫欄位將由平台AI自動生成
 </div>
 
 <label>市場分析</label>
@@ -219,17 +235,37 @@ AI協助快速生成 SBIR / 創業補助提案
 
 </div>
 
-<button onclick="generate()">
-生成補助計畫書
+<button class="btn" onclick="generate()">
+AI生成完整補助計畫
+</button>
+
+<button class="btn btn-secondary" onclick="copyResult()">
+複製內容
+</button>
+
+<button class="btn btn-secondary" onclick="downloadDoc()">
+下載Word
+</button>
+
+<button class="btn btn-secondary" onclick="downloadPDF()">
+下載PDF
 </button>
 
 <div class="loader" id="loader">
-平台智能 正在生成內容...
+AI 正在生成內容...
 </div>
 
-<div class="result" id="result">
-生成結果會顯示在這裡
+<div class="result" id="result" contenteditable="true">
+生成結果會顯示在這裡，可直接修改
 </div>
+
+</div>
+
+<div class="panel" id="historyPanel" style="display:none">
+
+<div class="section-title">生成紀錄</div>
+
+<div id="history"></div>
 
 </div>
 
@@ -237,30 +273,38 @@ AI協助快速生成 SBIR / 創業補助提案
 
 <script>
 
+function showGenerator(){
+document.getElementById("generator").style.display="block"
+document.getElementById("historyPanel").style.display="none"
+}
+
+function showHistory(){
+document.getElementById("generator").style.display="none"
+document.getElementById("historyPanel").style.display="block"
+renderHistory()
+}
+
 async function generate(){
 
 const data={
 
-company:document.getElementById("company").value,
-year:document.getElementById("year").value,
-company_desc:document.getElementById("company_desc").value,
-team:document.getElementById("team").value,
-project:document.getElementById("project").value,
-project_desc:document.getElementById("project_desc").value,
-tech:document.getElementById("tech").value,
+company:company.value,
+year:year.value,
+company_desc:company_desc.value,
+team:team.value,
+project:project.value,
+project_desc:project_desc.value,
+tech:tech.value,
 
-market:document.getElementById("market").value,
-customer:document.getElementById("customer").value,
-competitor:document.getElementById("competitor").value,
-advantage:document.getElementById("advantage").value,
-business:document.getElementById("business").value,
-milestone:document.getElementById("milestone").value,
-result_expect:document.getElementById("result_expect").value
+market:market.value,
+customer:customer.value,
+competitor:competitor.value,
+advantage:advantage.value,
+business:business.value,
+milestone:milestone.value,
+result_expect:result_expect.value
 
 }
-
-const loader=document.getElementById("loader")
-const result=document.getElementById("result")
 
 loader.style.display="block"
 result.innerText=""
@@ -277,6 +321,75 @@ const r=await res.json()
 
 loader.style.display="none"
 result.innerText=r.result
+
+saveHistory(r.result)
+
+}
+
+function copyResult(){
+
+navigator.clipboard.writeText(result.innerText)
+
+alert("內容已複製")
+
+}
+
+function downloadDoc(){
+
+const text=result.innerText
+
+const blob=new Blob(['\ufeff'+text],{type:'application/msword'})
+const url=URL.createObjectURL(blob)
+
+const a=document.createElement("a")
+a.href=url
+a.download="企業補助計畫書.doc"
+a.click()
+
+}
+
+function downloadPDF(){
+window.print()
+}
+
+function saveHistory(content){
+
+let list=JSON.parse(localStorage.getItem("history")||"[]")
+
+list.unshift({
+time:new Date().toLocaleString(),
+content
+})
+
+localStorage.setItem("history",JSON.stringify(list))
+
+}
+
+function renderHistory(){
+
+const list=JSON.parse(localStorage.getItem("history")||"[]")
+
+const box=document.getElementById("history")
+
+box.innerHTML=""
+
+list.forEach(item=>{
+
+const div=document.createElement("div")
+
+div.className="history-item"
+div.innerText=item.time
+
+div.onclick=()=>{
+
+result.innerText=item.content
+showGenerator()
+
+}
+
+box.appendChild(div)
+
+})
 
 }
 
