@@ -1,1 +1,127 @@
-<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>GrantFlow AI</title></head><body><h1>GrantFlow AI</h1><form id='f'><input id='company' placeholder='公司名稱'><button>生成</button></form><pre id='r'></pre><script>document.getElementById('f').onsubmit=async(e)=>{e.preventDefault();const res=await fetch('/api/generate',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({company:company.value,phase:'SBIR Phase 1',product:'x',industry:'y',problem:'z',technology:'t',market:'m',team:'u'})}); document.getElementById('r').textContent=await res.text();}</script></body></html>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>GrantFlow AI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body{
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+margin:0;
+background:linear-gradient(135deg,#1a1f3a,#0d0f1f);
+color:white;
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.container{
+width:700px;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(20px);
+border-radius:20px;
+padding:40px;
+box-shadow:0 20px 60px rgba(0,0,0,0.4);
+}
+
+h1{
+margin-top:0;
+font-size:36px;
+}
+
+input,textarea{
+width:100%;
+padding:12px;
+margin-top:10px;
+margin-bottom:20px;
+border-radius:8px;
+border:none;
+font-size:16px;
+}
+
+button{
+background:#5b8cff;
+border:none;
+padding:14px 24px;
+font-size:16px;
+border-radius:10px;
+cursor:pointer;
+transition:0.2s;
+}
+
+button:hover{
+transform:scale(1.05);
+background:#7aa2ff;
+}
+
+.result{
+margin-top:30px;
+padding:20px;
+background:rgba(0,0,0,0.3);
+border-radius:10px;
+min-height:120px;
+white-space:pre-wrap;
+}
+
+.footer{
+margin-top:20px;
+font-size:12px;
+opacity:0.5;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>GrantFlow AI</h1>
+<p>AI 補助計畫書生成器</p>
+
+<label>計畫名稱</label>
+<input id="title" placeholder="例如：AI智慧農業平台">
+
+<label>計畫說明</label>
+<textarea id="desc" rows="4" placeholder="描述你的產品或服務"></textarea>
+
+<button onclick="generate()">生成計畫</button>
+
+<div class="result" id="result">
+AI 生成結果會出現在這裡
+</div>
+
+<div class="footer">
+GrantFlow AI • Serverless Demo
+</div>
+
+</div>
+
+<script>
+
+async function generate(){
+
+const title=document.getElementById("title").value
+const desc=document.getElementById("desc").value
+
+document.getElementById("result").innerText="生成中..."
+
+const res=await fetch("/api/generate",{
+method:"POST",
+headers:{ "Content-Type":"application/json"},
+body:JSON.stringify({title,desc})
+})
+
+const data=await res.json()
+
+document.getElementById("result").innerText=data.result
+
+}
+
+</script>
+
+</body>
+</html>
